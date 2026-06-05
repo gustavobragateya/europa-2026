@@ -1,0 +1,778 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Europa 2026 · Hub da Viagem</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,600;0,9..144,900;1,9..144,500&family=Spline+Sans:wght@400;500;600;700&display=swap');
+
+  :root{
+    --ink:#221b14;
+    --paper:#f4ece0;
+    --paper2:#ece0cf;
+    --rust:#b5491f;
+    --rust-dark:#8f3514;
+    --pine:#3a5a40;
+    --gold:#c9912e;
+    --line:#cbb89c;
+    --muted:#6f6354;
+    --card:#fbf6ee;
+    --shadow:rgba(60,40,20,.13);
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html{scroll-behavior:smooth}
+  body{
+    font-family:'Spline Sans',sans-serif;
+    background:var(--paper);
+    background-image:radial-gradient(circle at 12% 8%, #f8f1e6 0%, transparent 45%),radial-gradient(circle at 90% 20%, #efe3d2 0%, transparent 50%);
+    color:var(--ink);
+    line-height:1.5;
+    -webkit-font-smoothing:antialiased;
+  }
+  .wrap{max-width:1080px;margin:0 auto;padding:0 22px 90px}
+
+  /* ---------- HEADER ---------- */
+  header{padding:46px 0 0;border-bottom:2px solid var(--ink);position:relative}
+  .kicker{font-size:.72rem;letter-spacing:.32em;text-transform:uppercase;color:var(--rust);font-weight:600;margin-bottom:14px}
+  h1{font-family:'Fraunces',serif;font-weight:900;font-size:clamp(2.7rem,7vw,5rem);line-height:.95;letter-spacing:-.02em}
+  h1 em{font-style:italic;color:var(--rust);font-weight:500}
+  .route{font-family:'Fraunces',serif;font-style:italic;font-size:clamp(1rem,2.2vw,1.4rem);color:var(--muted);margin-top:16px}
+  .route b{color:var(--pine);font-style:normal;font-weight:600}
+  .meta-row{display:flex;flex-wrap:wrap;gap:10px 26px;margin-top:22px;font-size:.86rem;color:var(--muted)}
+  .meta-row span b{color:var(--ink);font-weight:600}
+
+  /* ---------- TABS ---------- */
+  .tabs{display:flex;flex-wrap:wrap;gap:6px;margin-top:30px}
+  .tab-btn{font-family:'Spline Sans';font-size:.92rem;font-weight:600;color:var(--muted);background:transparent;border:2px solid transparent;border-bottom:none;border-radius:12px 12px 0 0;padding:12px 20px;cursor:pointer;transition:.15s;position:relative;top:2px}
+  .tab-btn:hover{color:var(--ink);background:var(--paper2)}
+  .tab-btn.active{color:var(--rust);background:var(--card);border-color:var(--ink);border-bottom:2px solid var(--card)}
+  .tab-btn .ico{margin-right:7px}
+
+  .tab-panel{display:none;animation:fade .25s ease}
+  .tab-panel.active{display:block}
+  @keyframes fade{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+
+  .panel-intro{margin:34px 0 8px}
+  .panel-intro h2{font-family:'Fraunces',serif;font-weight:900;font-size:clamp(1.6rem,4vw,2.4rem);display:flex;align-items:baseline;gap:14px}
+  .panel-intro h2 .n{font-size:.8rem;font-family:'Spline Sans';font-weight:700;color:var(--rust);letter-spacing:.2em;border:1.5px solid var(--rust);border-radius:30px;padding:4px 12px;transform:translateY(-6px)}
+  .panel-intro p{color:var(--muted);font-size:.94rem;margin:6px 0 24px;max-width:62ch}
+
+  /* ---------- CANVAS / CHECKLIST ---------- */
+  .canvas{background:var(--paper2);border:2px solid var(--ink);border-radius:18px;padding:26px;box-shadow:8px 8px 0 var(--ink);margin-bottom:10px}
+  .canvas-head{display:flex;align-items:center;gap:12px;margin-bottom:6px}
+  .pulse{width:11px;height:11px;border-radius:50%;background:var(--rust);box-shadow:0 0 0 0 rgba(181,73,31,.55);animation:pulse 2.2s infinite}
+  @keyframes pulse{0%{box-shadow:0 0 0 0 rgba(181,73,31,.5)}70%{box-shadow:0 0 0 12px rgba(181,73,31,0)}100%{box-shadow:0 0 0 0 rgba(181,73,31,0)}}
+
+  .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(270px,1fr));gap:16px;margin-top:18px}
+  .panel{background:var(--card);border:1.5px solid var(--line);border-radius:13px;padding:18px}
+  .panel h3{font-family:'Fraunces',serif;font-size:1.18rem;font-weight:600;margin-bottom:4px;display:flex;align-items:center;gap:8px}
+  .panel .tag{font-size:.64rem;letter-spacing:.14em;text-transform:uppercase;color:#fff;background:var(--pine);padding:3px 8px;border-radius:20px;font-weight:600}
+  .panel .tag.buy{background:var(--rust)}
+  .panel .tag.log{background:var(--gold);color:var(--ink)}
+  .panel .tag.risk{background:var(--rust-dark)}
+  .panel p.hint{font-size:.82rem;color:var(--muted);margin:8px 0 14px}
+
+  ul.checks{list-style:none}
+  ul.checks li{display:flex;align-items:flex-start;gap:10px;padding:7px 0;border-top:1px dashed var(--line);font-size:.9rem}
+  ul.checks li:first-child{border-top:none}
+  ul.checks input{appearance:none;-webkit-appearance:none;min-width:19px;height:19px;border:2px solid var(--rust);border-radius:5px;margin-top:2px;cursor:pointer;position:relative;transition:.15s;flex-shrink:0}
+  ul.checks input:checked{background:var(--rust)}
+  ul.checks input:checked::after{content:"✓";position:absolute;color:#fff;font-size:13px;font-weight:700;left:2.5px;top:-2px}
+  ul.checks label{cursor:pointer;flex:1}
+  ul.checks li.done label{text-decoration:line-through;color:var(--muted)}
+  .deadline{display:inline-block;font-size:.7rem;font-weight:600;color:var(--rust-dark);background:#f0dcc8;border-radius:5px;padding:1px 7px;margin-left:4px}
+
+  .open-q{font-size:.88rem;padding:9px 0;border-top:1px dashed var(--line)}
+  .open-q:first-child{border-top:none}
+  .open-q b{font-family:'Fraunces',serif;font-weight:600}
+  .open-q .note{display:block;color:var(--muted);font-size:.8rem;margin-top:2px}
+
+  /* ---------- TIMELINE ---------- */
+  .timeline{position:relative;margin-top:8px}
+  .day{display:grid;grid-template-columns:96px 1fr;gap:0;border-left:3px solid var(--line);position:relative}
+  .day::before{content:"";position:absolute;left:-8px;top:26px;width:13px;height:13px;border-radius:50%;background:var(--paper);border:3px solid var(--rust)}
+  .day.travel::before{background:var(--rust)}
+  .day.transit::before{background:var(--paper);border-color:var(--muted)}
+  .date-col{padding:20px 16px 20px 22px;text-align:right}
+  .date-col .d{font-family:'Fraunces',serif;font-weight:900;font-size:1.5rem;line-height:1}
+  .date-col .m{font-size:.7rem;letter-spacing:.18em;text-transform:uppercase;color:var(--muted);margin-top:3px}
+  .date-col .wd{font-size:.7rem;color:var(--rust);font-weight:600;margin-top:2px}
+  .day-body{padding:18px 6px 18px 20px;border-bottom:1px dashed var(--line)}
+  .city-pill{display:inline-block;font-family:'Fraunces',serif;font-weight:600;font-size:1.05rem;margin-bottom:8px}
+  .city-pill .arrow{color:var(--rust);font-style:normal;margin:0 6px}
+  .fixed{display:flex;gap:9px;align-items:baseline;font-size:.86rem;padding:3px 0;color:var(--ink)}
+  .fixed .t{font-variant-numeric:tabular-nums;font-weight:600;color:var(--pine);min-width:48px}
+  .fixed .ic{font-size:.78rem}
+  .plan-flag{display:inline-block;font-size:.74rem;font-weight:600;color:var(--rust);background:#f3ddd0;border:1px dashed var(--rust);border-radius:6px;padding:2px 9px;margin-top:7px}
+  .plan-flag.ok{color:var(--pine);background:#e4ecdf;border-color:var(--pine);border-style:solid}
+
+  .itin{margin-top:10px;display:flex;flex-direction:column;gap:8px}
+  .itin .blk{font-size:.88rem;display:flex;gap:11px;align-items:baseline;border-radius:9px;padding:6px 8px;margin:-6px -8px}
+  .itin .blk.has-modal{cursor:pointer;transition:.15s}
+  .itin .blk.has-modal:hover{background:var(--paper2)}
+  .itin .blk .ph{font-weight:700;color:var(--rust);min-width:60px;font-size:.7rem;text-transform:uppercase;letter-spacing:.07em;flex-shrink:0;padding-top:2px}
+  .itin .blk .txt b{font-weight:600}
+  .itin .blk .note{display:block;color:var(--muted);font-size:.8rem;margin-top:1px}
+  .itin .local{display:inline-block;font-size:.62rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--pine);border:1px solid var(--pine);border-radius:20px;padding:1px 7px;margin-left:5px;vertical-align:middle}
+  .itin .buytag{display:inline-block;font-size:.6rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:#fff;background:var(--rust-dark);border-radius:20px;padding:2px 9px;margin-left:6px;vertical-align:middle;white-space:nowrap}
+  .itin .buytag::before{content:"● ";color:#ffd9c2}
+  .itin .maybetag{display:inline-block;font-size:.6rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--ink);background:var(--gold);border-radius:20px;padding:2px 9px;margin-left:6px;vertical-align:middle;white-space:nowrap}
+  .itin .maybetag::before{content:"? ";font-weight:900}
+  .itin .seemore{display:inline-block;font-size:.7rem;font-weight:600;color:var(--rust);margin-top:4px}
+  .itin .seemore::before{content:"▸ ";}
+  .itin .tkbox{margin-left:auto;align-self:center;flex-shrink:0;font-size:.58rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;padding:3px 9px;border-radius:20px;white-space:nowrap}
+  .itin .tkbox.yes{background:var(--rust);color:#fff}
+  .itin .tkbox.no{background:transparent;color:var(--muted);border:1px solid var(--line)}
+
+  /* ---------- BOOKING CARDS ---------- */
+  .bgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:16px;margin-top:8px}
+  .bcard{background:var(--card);border:1.5px solid var(--ink);border-radius:13px;padding:18px;position:relative;transition:.18s}
+  .bcard:hover{transform:translateY(-3px);box-shadow:5px 7px 0 var(--shadow)}
+  .bcard .cat{font-size:.66rem;letter-spacing:.16em;text-transform:uppercase;font-weight:700;color:var(--rust)}
+  .bcard h4{font-family:'Fraunces',serif;font-size:1.22rem;font-weight:600;margin:3px 0 10px}
+  .bcard .row{display:flex;justify-content:space-between;gap:10px;font-size:.82rem;padding:4px 0;border-top:1px solid var(--paper2)}
+  .bcard .row:first-of-type{border-top:none}
+  .bcard .row .k{color:var(--muted)}
+  .bcard .row .v{font-weight:600;text-align:right}
+  .bcard .ref{font-family:'Spline Sans';font-weight:700;letter-spacing:.05em;color:var(--rust-dark)}
+  .bcard .cost{font-family:'Fraunces',serif;font-weight:900;font-size:1.15rem;color:var(--pine);margin-top:10px}
+  .gid{margin-top:11px;font-size:.66rem;color:var(--muted);background:var(--paper2);border-radius:6px;padding:5px 9px;word-break:break-all;font-family:monospace}
+  .gid b{color:var(--ink)}
+
+  /* ---------- BUDGET ---------- */
+  .budget{background:var(--ink);color:var(--paper);border-radius:18px;padding:28px;margin-top:8px}
+  .budget h3{font-family:'Fraunces',serif;color:var(--paper);font-size:1.4rem;margin-bottom:4px}
+  .budget .bsub{color:#c9bda9;font-size:.85rem;margin-bottom:18px}
+  .blines{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:24px}
+  .bcol h5{font-size:.72rem;letter-spacing:.18em;text-transform:uppercase;color:var(--gold);margin-bottom:10px}
+  .bline{display:flex;justify-content:space-between;font-size:.86rem;padding:5px 0;border-bottom:1px solid #3a3026}
+  .bline .v{font-variant-numeric:tabular-nums;font-weight:600}
+  .btot{display:flex;justify-content:space-between;font-family:'Fraunces',serif;font-weight:900;font-size:1.1rem;margin-top:10px;color:var(--gold)}
+  .bnote{font-size:.76rem;color:#a99b86;margin-top:14px;font-style:italic}
+  .conv{border-bottom:1px dotted var(--gold);cursor:help;position:relative}
+  .conv:hover::after{content:attr(data-orig);position:absolute;left:50%;bottom:140%;transform:translateX(-50%);background:var(--paper);color:var(--ink);font-size:.72rem;font-weight:700;white-space:nowrap;padding:5px 10px;border-radius:7px;box-shadow:0 6px 18px rgba(0,0,0,.35);z-index:20}
+  .conv:hover::before{content:"";position:absolute;left:50%;bottom:140%;transform:translate(-50%,92%);border:5px solid transparent;border-top-color:var(--paper);z-index:20}
+
+  /* ---------- MODAL ---------- */
+  .modal-overlay{position:fixed;inset:0;background:rgba(34,27,20,.62);display:none;align-items:center;justify-content:center;z-index:100;padding:20px}
+  .modal-overlay.open{display:flex}
+  .modal{background:var(--card);max-width:560px;width:100%;border:2px solid var(--ink);border-radius:16px;box-shadow:10px 10px 0 var(--ink);max-height:90vh;overflow-y:auto;position:relative;animation:pop .25s ease}
+  @keyframes pop{from{opacity:0;transform:scale(.96)}to{opacity:1;transform:none}}
+  .modal img{width:100%;height:270px;object-fit:cover;display:block;background:var(--paper2)}
+  .modal-body{padding:24px}
+  .modal .mcity{font-size:.66rem;letter-spacing:.16em;text-transform:uppercase;font-weight:700;color:var(--rust)}
+  .modal h3{font-family:'Fraunces',serif;font-size:1.6rem;font-weight:600;margin:3px 0 12px}
+  .modal p{font-size:.94rem;color:var(--ink);line-height:1.6}
+  .modal-close{position:absolute;top:14px;right:14px;width:34px;height:34px;border-radius:50%;background:var(--ink);color:#fff;border:none;font-size:1.1rem;cursor:pointer;display:flex;align-items:center;justify-content:center;z-index:2}
+  .modal-close:hover{background:var(--rust)}
+
+  footer{margin-top:50px;padding-top:22px;border-top:2px solid var(--ink);font-size:.8rem;color:var(--muted);display:flex;justify-content:space-between;flex-wrap:wrap;gap:10px}
+  .save-toast{position:fixed;bottom:20px;left:50%;transform:translateX(-50%) translateY(80px);background:var(--pine);color:#fff;padding:10px 20px;border-radius:30px;font-size:.82rem;font-weight:600;box-shadow:0 6px 20px var(--shadow);transition:.3s;z-index:50}
+  .save-toast.show{transform:translateX(-50%) translateY(0)}
+
+  @media(max-width:560px){
+    .day{grid-template-columns:70px 1fr}
+    .date-col{padding:16px 8px 16px 12px}
+    .canvas{box-shadow:5px 5px 0 var(--ink)}
+    .tab-btn{padding:10px 13px;font-size:.84rem}
+    .itin .tkbox{display:none}
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header>
+    <div class="kicker">Hub da Viagem · jun 2026</div>
+    <h1>Europa <em>2026</em></h1>
+    <div class="route"><b>Londres</b> <span style="color:var(--rust)">→</span> <b>Paris</b> <span style="color:var(--rust)">→</span> <b>Suíça</b> <span style="color:var(--rust)">→</span> <b>Roma</b> <span style="color:var(--rust)">→</span> <b>Londres</b></div>
+    <div class="meta-row">
+      <span><b>Período:</b> 03 – 18 de junho</span>
+      <span><b>Viajantes:</b> Gustavo · Aguinaldo · Murilo</span>
+      <span><b>Base Suíça:</b> Giswil</span>
+    </div>
+    <nav class="tabs">
+      <button class="tab-btn active" data-tab="tab-checklist"><span class="ico">✓</span>Checklist</button>
+      <button class="tab-btn" data-tab="tab-roteiro"><span class="ico">🗺</span>Roteiro</button>
+      <button class="tab-btn" data-tab="tab-reservas"><span class="ico">🎫</span>Reservas</button>
+      <button class="tab-btn" data-tab="tab-financas"><span class="ico">£</span>Finanças</button>
+    </nav>
+  </header>
+
+  <!-- ============ ABA 1 · CHECKLIST ============ -->
+  <section id="tab-checklist" class="tab-panel active">
+    <div class="panel-intro">
+      <h2><span class="n">01</span> Checklist</h2>
+      <p>O que ainda precisa ser decidido e comprado antes da viagem. As caixas marcam o progresso e ficam salvas neste arquivo.</p>
+    </div>
+
+    <div class="canvas">
+      <div class="canvas-head"><span class="pulse"></span><strong style="font-family:'Fraunces',serif;font-size:1.2rem">Pendências da viagem</strong></div>
+      <div class="grid">
+
+        <div class="panel">
+          <h3>Cidades a planejar <span class="tag">Decidir</span></h3>
+          <p class="hint">Definir o que fazer em cada dia. Depois disso compramos os ingressos.</p>
+          <div class="open-q"><b>Londres</b> — concluído ✓ <span class="note">Dias 03–05 feitos (sem ingressos pagos — tudo por fora) · 06 manhã livre e Eurostar à tarde.</span></div>
+          <div class="open-q"><b>Suíça</b> — rascunho pronto, refinar <span class="note">Dia 10 Jungfrau · 11 lagos e Lucerna · 12 flexível (Lungern, reserva p/ Jungfraujoch).</span></div>
+          <div class="open-q"><b>Roma</b> — rascunho pronto, refinar <span class="note">Dia 13 Coliseu 15:00 (comprado ✓) · 14 centro histórico · 15 Vaticano. Domingo o Vaticano fecha, por isso a ordem.</span></div>
+          <div class="open-q"><b>Paris</b> — planejado ✓ <span class="note">Dia 07 Trocadéro, PSG 11:00 (comprado ✓) e avenidas · 08 Louvre 13:00 (comprado ✓) · 09 manhã em Montmartre (malas com a Sarah).</span></div>
+        </div>
+
+        <div class="panel">
+          <h3>Ingressos a comprar <span class="tag buy">Comprar</span></h3>
+          <p class="hint">Comprar depois de definir os dias. Os marcados com horário esgotam.</p>
+          <ul class="checks">
+            <li class="done"><input type="checkbox" id="t1" checked><label for="t1">Coliseu + Fórum Romano — comprado, 13/jun 15:00 ✓</label></li>
+            <li><input type="checkbox" id="t2"><label for="t2">Vaticano + Capela Sistina <span class="deadline">horário marcado</span></label></li>
+            <li class="done"><input type="checkbox" id="t3" checked><label for="t3">Torre Eiffel — decidido, não vão subir (ver do Trocadéro, de graça) ✓</label></li>
+            <li class="done"><input type="checkbox" id="t4" checked><label for="t4">Louvre — comprado, 08/jun 13:00 ✓</label></li>
+            <li class="done"><input type="checkbox" id="t11" checked><label for="t11">Tour do PSG — Parc des Princes (07/jun, entrada 11:00, €28/pessoa) — comprado ✓</label></li>
+            <li><input type="checkbox" id="t5"><label for="t5">Grindelwald First (teleférico)</label></li>
+            <li class="done"><input type="checkbox" id="t7" checked><label for="t7">Tower of London — não compraram, viram por fora ✓</label></li>
+            <li class="done"><input type="checkbox" id="t9" checked><label for="t9">Westminster Abbey — não entraram, viram por fora ✓</label></li>
+            <li class="done"><input type="checkbox" id="t8" checked><label for="t8">London Eye — não subiram ✓</label></li>
+          </ul>
+        </div>
+
+        <div class="panel">
+          <h3>Logística <span class="tag log">Fazer</span></h3>
+          <p class="hint">Tarefas operacionais antes e durante a viagem.</p>
+          <ul class="checks">
+            <li class="done"><input type="checkbox" id="l0" checked><label for="l0">Novo horário do Eurostar confirmado — 18:01 → 21:19 ✓</label></li>
+            <li><input type="checkbox" id="l1"><label for="l1">Guarda-volumes em Roma (voo de madrugada dia 16)</label></li>
+            <li><input type="checkbox" id="l2"><label for="l2">Confirmar Uber Zürich HB → aeroporto (dia 09)</label></li>
+            <li><input type="checkbox" id="l3"><label for="l3">Check-in online easyJet</label></li>
+            <li><input type="checkbox" id="l4"><label for="l4">Check-in online Wizz Air</label></li>
+            <li><input type="checkbox" id="l5"><label for="l5">Baixar boarding passes</label></li>
+            <li><input type="checkbox" id="l6"><label for="l6">Baixar mapas offline</label></li>
+            <li class="done"><input type="checkbox" id="l7" checked><label for="l7">Confirmar valor do Airbnb de Roma — R$ 3.235,47 ✓</label></li>
+            <li><input type="checkbox" id="l8"><label for="l8">Enviar passaportes dos 3 à Valentina (libera Smart Lock em Roma)</label></li>
+            <li><input type="checkbox" id="l9"><label for="l9">Avisar a Sarah no dia 06 (1º dia!) que vão deixar as malas com ela no dia 09 após o check-out <span class="deadline">06/jun</span></label></li>
+          </ul>
+        </div>
+
+        <div class="panel">
+          <h3>Riscos <span class="tag risk">Atenção</span></h3>
+          <p class="hint">Pontos a vigiar — não são tarefas, são lembretes.</p>
+          <div class="open-q"><b>Clima na Suíça</b><span class="note">Principal risco. Manter a programação alpina flexível.</span></div>
+          <div class="open-q"><b>Saída de Giswil (13/jun)</b><span class="note">Sair ~05:00 para o voo das 08:30 em Zurique.</span></div>
+          <div class="open-q"><b>Voo Roma → Londres (16/jun)</b><span class="note">06:40 — deslocamento de madrugada para FCO.</span></div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ ABA 2 · ROTEIRO ============ -->
+  <section id="tab-roteiro" class="tab-panel">
+    <div class="panel-intro">
+      <h2><span class="n">02</span> Roteiro</h2>
+      <p>A viagem dia a dia. O que está fixo aparece com horário. Clique em qualquer visita marcada com <b style="color:var(--rust)">▸</b> pra abrir uma foto e a explicação do local.</p>
+    </div>
+
+    <div class="timeline">
+
+      <div class="day transit">
+        <div class="date-col"><div class="d">02</div><div class="m">Jun</div><div class="wd">Ter</div></div>
+        <div class="day-body">
+          <span class="city-pill">Em trânsito</span>
+          <div class="fixed"><span class="t">23:50</span><span><span class="ic">✈</span> Aguinaldo embarca GRU — LATAM LA8084</span></div>
+        </div>
+      </div>
+
+      <div class="day travel">
+        <div class="date-col"><div class="d">03</div><div class="m">Jun</div><div class="wd">Qua</div></div>
+        <div class="day-body">
+          <span class="city-pill">Londres</span>
+          <div class="fixed"><span class="t">15:05</span><span><span class="ic">🛬</span> Aguinaldo e Murilo chegam a Londres (LHR)</span></div>
+          <span class="plan-flag ok">Roteiro · chegada e descanso</span>
+          <div class="itin">
+            <div class="blk"><span class="ph">15:05</span><span class="txt">Gustavo busca o Aguinaldo e o Murilo em Heathrow<span class="note">Os dois chegam de avião. Encontrar no desembarque e voltar juntos pra casa em Battersea.</span></span><span class="tkbox no">Sem ingresso</span></div>
+            <div class="blk"><span class="ph">Tarde</span><span class="txt">Deixar a mala em casa<span class="note">Passar em casa, largar a bagagem e respirar depois do voo longo.</span></span><span class="tkbox no">Sem ingresso</span></div>
+            <div class="blk has-modal" data-place="battersea"><span class="ph">Noite</span><span class="txt">Volta tranquila por Battersea<span class="local">local</span><span class="note">Dar uma volta pela vizinhança, sem pressa. A Battersea Power Station fica pertinho, com a beira do rio e restaurantes.</span><span class="seemore">ver fotos e info</span></span><span class="tkbox no">Sem ingresso</span></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="day">
+        <div class="date-col"><div class="d">04</div><div class="m">Jun</div><div class="wd">Qui</div></div>
+        <div class="day-body">
+          <span class="city-pill">Londres · A City e o Rio</span>
+          <span class="plan-flag ok">Roteiro sugerido</span>
+          <div class="itin">
+            <div class="blk has-modal" data-place="tower"><span class="ph">Manhã</span><span class="txt">Tower of London + Tower Bridge<span class="note">Acabaram não comprando ingresso — viram a fortaleza e a Tower Bridge por fora.</span><span class="seemore">ver fotos e info</span></span><span class="tkbox no">Sem ingresso</span></div>
+            <div class="blk has-modal" data-place="borough"><span class="ph">Almoço</span><span class="txt">Borough Market<span class="local">local</span><span class="note">Mercado gastronômico debaixo da London Bridge, pra comer no balcão entre as bancas.</span><span class="seemore">ver fotos e info</span></span><span class="tkbox no">Sem ingresso</span></div>
+            <div class="blk has-modal" data-place="tate"><span class="ph">Tarde</span><span class="txt">Millennium Bridge, Tate Modern e South Bank<span class="note">Atravessar a passarela até a margem sul; a Tate é grátis e tem vista do terraço.</span><span class="seemore">ver fotos e info</span></span><span class="tkbox no">Sem ingresso</span></div>
+            <div class="blk has-modal" data-place="stpauls"><span class="ph">17:00</span><span class="txt">Choral Evensong no St Paul's<span class="local">grátis</span><span class="note">Chegar uns 15 min antes. Dá pra entrar na catedral de graça ouvindo o coro. Confirmar no calendário na semana.</span><span class="seemore">ver fotos e info</span></span><span class="tkbox no">Sem ingresso</span></div>
+            <div class="blk"><span class="ph">~18:00</span><span class="txt">Passada no escritório do Gustavo (Blackfriars)<span class="local">trabalho</span><span class="note">Logo depois do Evensong, ali do lado. Chegar perto das 18h.</span></span><span class="tkbox no">Sem ingresso</span></div>
+            <div class="blk has-modal" data-place="covent"><span class="ph">Noite</span><span class="txt">Covent Garden / Soho<span class="note">Artistas de rua, mercado coberto e jantar. Clima animado à noite.</span><span class="seemore">ver fotos e info</span></span><span class="tkbox no">Sem ingresso</span></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="day">
+        <div class="date-col"><div class="d">05</div><div class="m">Jun</div><div class="wd">Sex</div></div>
+        <div class="day-body">
+          <span class="city-pill">Londres · Realeza e Westminster</span>
+          <span class="plan-flag ok">Roteiro sugerido</span>
+          <div class="itin">
+            <div class="blk has-modal" data-place="buckingham"><span class="ph">10:15</span><span class="txt">St James's Park → Buckingham Palace<span class="note">Troca da Guarda às 11:00, confirmada pro dia 05/jun. Grátis. Chegar 10:15 pra pegar lugar.</span><span class="seemore">ver fotos e info</span></span><span class="tkbox no">Sem ingresso</span></div>
+            <div class="blk has-modal" data-place="hyde"><span class="ph">Após a guarda</span><span class="txt">Hyde Park<span class="local">local</span><span class="note">Subir do Buckingham pelos parques até o Hyde, o maior de Londres, com o Serpentine ao lado.</span><span class="seemore">ver fotos e info</span></span><span class="tkbox no">Sem ingresso</span></div>
+            <div class="blk"><span class="ph">Almoço</span><span class="txt">Flat Iron<span class="local">local</span><span class="note">Bem do lado do Hyde (Marble Arch). Bife caprichado a preço honesto. Não pega reserva, é pôr o nome na fila.</span></span><span class="tkbox no">Sem ingresso</span></div>
+            <div class="blk has-modal" data-place="westminster"><span class="ph">Tarde</span><span class="txt">Westminster<span class="note">Big Ben, Parlamento e Westminster Abbey — tudo visto por fora, de graça.</span><span class="seemore">ver fotos e info</span></span><span class="tkbox no">Sem ingresso</span></div>
+            <div class="blk has-modal" data-place="eye"><span class="ph">Fim de tarde</span><span class="txt">Westminster Bridge → London Eye → South Bank<span class="note">Foto clássica do Big Ben pela ponte. Não subiram na roda-gigante. Trafalgar Square e a National Gallery (grátis) fecharam o trajeto.</span><span class="seemore">ver fotos e info</span></span><span class="tkbox no">Sem ingresso</span></div>
+            <div class="blk"><span class="ph">Noite</span><span class="txt">Pub tradicional<span class="local">local</span><span class="note">Fechar o dia num pub inglês, com uma pint e clima de bairro.</span></span><span class="tkbox no">Sem ingresso</span></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="day travel">
+        <div class="date-col"><div class="d">06</div><div class="m">Jun</div><div class="wd">Sáb</div></div>
+        <div class="day-body">
+          <span class="city-pill">Londres <span class="arrow">→</span> Paris</span>
+          <span class="plan-flag ok">Manhã livre · tarde de viagem</span>
+          <div class="itin">
+            <div class="blk has-modal" data-place="portobello"><span class="ph">Manhã</span><span class="txt">Battersea Park ou mercado de Portobello<span class="local">local</span><span class="note">Opção relaxada perto de casa, ou o mercado de Portobello em Notting Hill, que no sábado é o dia mais animado. Voltar ~13:00 pra pegar as malas.</span><span class="seemore">ver fotos e info</span></span><span class="tkbox no">Sem ingresso</span></div>
+          </div>
+          <div class="fixed" style="margin-top:10px"><span class="t">14:00</span><span><span class="ic">🔑</span> Check-in Paris (75008, perto da Gare Saint-Lazare) — chegada à noite</span></div>
+          <div class="fixed"><span class="t">~16:00</span><span><span class="ic">🚇</span> Sair de Battersea com as malas rumo a St Pancras (~35 min)</span></div>
+          <div class="fixed"><span class="t">16:46</span><span><span class="ic">🚉</span> Chegar a St Pancras (portões fecham 17:31, 30 min antes)</span></div>
+          <div class="fixed"><span class="t">18:01</span><span><span class="ic">🚄</span> Eurostar 9044 · St Pancras → Gare du Nord (chega 21:19)</span></div>
+          <div class="fixed"><span class="t">—</span><span style="color:var(--muted)">Controle migratório antes do embarque. Assentos Coach 5: 53, 54, 58.</span></div>
+        </div>
+      </div>
+
+      <div class="day">
+        <div class="date-col"><div class="d">07</div><div class="m">Jun</div><div class="wd">Dom</div></div>
+        <div class="day-body">
+          <span class="city-pill">Paris · Trocadéro, PSG e avenidas</span>
+          <span class="plan-flag ok">Roteiro sugerido</span>
+          <div class="itin">
+            <div class="blk has-modal" data-place="eiffel"><span class="ph">09:00</span><span class="txt">Trocadéro e Champ de Mars<span class="note">Ver a Torre Eiffel por fora, sem subir. Chegar cedo: luz boa e menos gente. Antes de sair, café na Maison R&S (em frente ao apê). Sair do Trocadéro ~10:40.</span><span class="seemore">ver fotos e info</span></span><span class="tkbox no">Sem ingresso</span></div>
+            <div class="blk has-modal" data-place="psg"><span class="ph">11:00</span><span class="txt">Tour do Parc des Princes (PSG)<span class="local">comprado ✓</span><span class="note">Ingressos comprados, entrada 11:00. €28/pessoa (~€84 os três). Metrô linha 9 direto do Trocadéro até Porte de Saint-Cloud (~12 min). Tour de ~1h30: beira do gramado, vestiário e parede de troféus.</span><span class="seemore">ver fotos e info</span></span><span class="tkbox yes">Ingresso · €28</span></div>
+            <div class="blk"><span class="ph">~12:45</span><span class="txt">Almoço<span class="note">Perto do estádio ou voltando pela linha 9 rumo às avenidas.</span></span><span class="tkbox no">Sem ingresso</span></div>
+            <div class="blk has-modal" data-place="arc"><span class="ph">Tarde</span><span class="txt">Champs-Élysées e Arco do Triunfo (por fora)<span class="note">Linha 9 até Franklin D. Roosevelt e descer a avenida mais famosa de Paris a pé, vendo o Arco de fora, sem subir. De graça.</span><span class="seemore">ver fotos e info</span></span><span class="tkbox no">Sem ingresso</span></div>
+            <div class="blk has-modal" data-place="lafayette"><span class="ph">Fim de tarde</span><span class="txt">Galeries Lafayette<span class="local">local</span><span class="note">A cúpula de vitral art nouveau e o terraço no topo, com vista da cidade e da Torre, tudo de graça. Coladinho no apê de vocês. Você já foi e gostou.</span><span class="seemore">ver fotos e info</span></span><span class="tkbox no">Sem ingresso</span></div>
+            <div class="blk has-modal" data-place="seine"><span class="ph">Talvez</span><span class="txt">Passeio de barco no Sena<span class="maybetag">talvez</span><span class="note">Bateaux Parisiens a partir de €7,50/pessoa (dica da Sarah — bem mais barato que os €17 de outras empresas). Combo: pôr do sol na Torre → 1h de barco → fotos do Trocadéro à noite.</span><span class="seemore">ver fotos e info</span></span><span class="tkbox yes">Opcional · €7,50</span></div>
+            <div class="blk"><span class="ph">Noite</span><span class="txt">Jantar e a torre iluminada<span class="local">local</span><span class="note">A Torre Eiffel cintila por 5 min a cada hora depois do anoitecer. Jantar perto do apê: Le Vaisseau Vert (francês, −30% no The Fork) ou Calice Alto (pizza boa, €20–25).</span></span><span class="tkbox no">Sem ingresso</span></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="day">
+        <div class="date-col"><div class="d">08</div><div class="m">Jun</div><div class="wd">Seg</div></div>
+        <div class="day-body">
+          <span class="city-pill">Paris · Louvre e centro</span>
+          <span class="plan-flag ok">Roteiro sugerido</span>
+          <div class="itin">
+            <div class="blk has-modal" data-place="notredame"><span class="ph">Manhã</span><span class="txt">Île de la Cité → Tuileries<span class="note">Começar pela Notre-Dame (por fora, grátis). Entrar na Sainte-Chapelle pelos vitrais é opcional, €16 (UE) ou €22 (fora da UE). Depois caminhar pela beira do rio até o Louvre, almoçando no caminho.</span><span class="seemore">ver fotos e info</span></span><span class="tkbox yes">Sainte-Chapelle · €22</span></div>
+            <div class="blk has-modal" data-place="louvre"><span class="ph">13:00</span><span class="txt">Museu do Louvre<span class="local">comprado ✓</span><span class="note">Ingressos comprados, entrada 13:00. €32/pessoa (fora da UE). Chegar ~12:40 pra fila da entrada. Focar nos destaques pra não cansar — umas 3h rende bem.</span><span class="seemore">ver fotos e info</span></span><span class="tkbox yes">Ingresso · €32</span></div>
+            <div class="blk has-modal" data-place="latin"><span class="ph">Noite</span><span class="txt">Bairro Latino / Saint-Germain<span class="local">local</span><span class="note">Ruelas, cafés e jantar na margem esquerda. Clima boêmio.</span><span class="seemore">ver fotos e info</span></span><span class="tkbox no">Sem ingresso</span></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="day travel">
+        <div class="date-col"><div class="d">09</div><div class="m">Jun</div><div class="wd">Ter</div></div>
+        <div class="day-body">
+          <span class="city-pill">Paris <span class="arrow">→</span> Suíça</span>
+          <span class="plan-flag ok">Manhã livre · tarde de viagem</span>
+          <div class="itin">
+            <div class="blk has-modal" data-place="montmartre"><span class="ph">Manhã</span><span class="txt">Montmartre e Sacré-Cœur<span class="local">local</span><span class="note">Subir até a basílica branca pra ver Paris do alto. Malas ficam com a Sarah depois do check-out (avisar no dia 06!) — buscar antes de ir pra Gare de Lyon.</span><span class="seemore">ver fotos e info</span></span><span class="tkbox no">Sem ingresso</span></div>
+          </div>
+          <div class="fixed" style="margin-top:10px"><span class="t">11:00</span><span><span class="ic">🔑</span> Check-out Paris — deixar as malas com a Sarah (combinado no dia 06)</span></div>
+          <div class="fixed"><span class="t">16:22</span><span><span class="ic">🚄</span> TGV Lyria 9219 · Gare de Lyon → Zürich HB (chega 21:00)</span></div>
+          <div class="fixed"><span class="t">~21:10</span><span><span class="ic">🚗</span> Uber Zürich HB → Aeroporto (~15 min)</span></div>
+          <div class="fixed"><span class="t">21:00</span><span><span class="ic">🅿</span> Retirar carro SIXT (cortesia de 60 min — ok)</span></div>
+          <div class="fixed"><span class="t">16:00+</span><span><span class="ic">🏔</span> Check-in Giswil — self check-in com cofre de chaves</span></div>
+        </div>
+      </div>
+
+      <div class="day">
+        <div class="date-col"><div class="d">10</div><div class="m">Jun</div><div class="wd">Qua</div></div>
+        <div class="day-body">
+          <span class="city-pill">Suíça · Região da Jungfrau</span>
+          <span class="plan-flag ok">Rascunho inicial</span>
+          <div class="itin">
+            <div class="blk has-modal" data-place="grindelwald"><span class="ph">Manhã</span><span class="txt">Grindelwald e Grindelwald First<span class="note">Dirigir até Grindelwald (~1h15). Teleférico ida e volta ao First a partir de CHF 38/pessoa (preço dinâmico, varia com a data). Cai ainda mais com Half Fare Card ou Swiss Travel Pass. A passarela no penhasco (First Cliff Walk) compensa.</span><span class="seemore">ver fotos e info</span></span><span class="tkbox yes">Teleférico · a partir de CHF 38</span></div>
+            <div class="blk has-modal" data-place="lauterbrunnen"><span class="ph">Tarde</span><span class="txt">Lauterbrunnen e Mürren<span class="note">O vale das cachoeiras é de graça pra ver. Subir a Mürren de trem e teleférico é opcional e o valor varia conforme o trecho.</span><span class="seemore">ver fotos e info</span></span><span class="tkbox yes">Opcional · varia</span></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="day">
+        <div class="date-col"><div class="d">11</div><div class="m">Jun</div><div class="wd">Qui</div></div>
+        <div class="day-body">
+          <span class="city-pill">Suíça · Lagos e Lucerna</span>
+          <span class="plan-flag ok">Rascunho inicial</span>
+          <div class="itin">
+            <div class="blk has-modal" data-place="lucerne"><span class="ph">Manhã</span><span class="txt">Lucerna<span class="note">Cidade velha, a Ponte da Capela (Kapellbrücke) e o lago. Dirigir ~40 min de Giswil.</span><span class="seemore">ver fotos e info</span></span><span class="tkbox no">Sem ingresso</span></div>
+            <div class="blk has-modal" data-place="aareschlucht"><span class="ph">Caminho</span><span class="txt">Aareschlucht (desfiladeiro do Aare)<span class="note">Parada em Meiringen, na rota pro Brienz. Passarelas de madeira por 1,4 km dentro de um desfiladeiro estreito. CHF 13/pessoa.</span><span class="seemore">ver fotos e info</span></span><span class="tkbox yes">Ingresso · CHF 13</span></div>
+            <div class="blk has-modal" data-place="brienz"><span class="ph">Tarde</span><span class="txt">Lago de Brienz e Interlaken<span class="note">Águas turquesa entre montanhas. Parar em mirantes e talvez no vilarejo de Iseltwald.</span><span class="seemore">ver fotos e info</span></span><span class="tkbox no">Sem ingresso</span></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="day">
+        <div class="date-col"><div class="d">12</div><div class="m">Jun</div><div class="wd">Sex</div></div>
+        <div class="day-body">
+          <span class="city-pill">Suíça · Dia flexível</span>
+          <span class="plan-flag ok">Rascunho inicial</span>
+          <div class="itin">
+            <div class="blk has-modal" data-place="lungern"><span class="ph">Dia</span><span class="txt">Lungern e arredores de Giswil<span class="local">local</span><span class="note">O lago turquesa de Lungern fica pertinho de casa. Dia mais leve, sem dirigir muito, pra curtir a base com calma.</span><span class="seemore">ver fotos e info</span></span><span class="tkbox no">Sem ingresso</span></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="day travel">
+        <div class="date-col"><div class="d">13</div><div class="m">Jun</div><div class="wd">Sáb</div></div>
+        <div class="day-body">
+          <span class="city-pill">Suíça <span class="arrow">→</span> Roma</span>
+          <div class="fixed"><span class="t">~05:00</span><span><span class="ic">🚗</span> Sair de Giswil rumo a Zurique</span></div>
+          <div class="fixed"><span class="t">07:00</span><span><span class="ic">🅿</span> Devolver carro SIXT (Parking 3, aeroporto)</span></div>
+          <div class="fixed"><span class="t">08:30</span><span><span class="ic">✈</span> easyJet EJU2987 · Zurique → Roma FCO (chega 10:05)</span></div>
+          <div class="fixed"><span class="t">15:00+</span><span><span class="ic">🔑</span> Check-in Roma (perto da Termini)</span></div>
+          <span class="plan-flag ok">Rascunho inicial</span>
+          <div class="itin">
+            <div class="blk"><span class="ph">10:05</span><span class="txt">FCO → Termini e check-in<span class="note">Leonardo Express liga o aeroporto à Termini em ~32 min, €14/pessoa. Largar as malas, almoçar com calma antes do Coliseu.</span></span><span class="tkbox yes">Trem · €14</span></div>
+            <div class="blk has-modal" data-place="colosseum"><span class="ph">15:00</span><span class="txt">Coliseu, Fórum Romano e Palatino<span class="local">comprado ✓</span><span class="note">Ingressos comprados, entrada 15:00 às 18:00. Os três sítios no mesmo ingresso; o Fórum e o Palatino valem 24h (dá pra voltar na manhã do dia 14). Dica: baixar antes o app oficial gratuito "Parco Colosseo" pra ter áudio no fone.</span><span class="seemore">ver fotos e info</span></span><span class="tkbox yes">Ingresso · ~R$176</span></div>
+            <div class="blk"><span class="ph">Noite</span><span class="txt">Jantar na Monti<span class="local">local</span><span class="note">Bairro charmoso ao lado do Coliseu, cheio de trattorias e bares, ótimo pra fechar o primeiro dia.</span></span><span class="tkbox no">Sem ingresso</span></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="day">
+        <div class="date-col"><div class="d">14</div><div class="m">Jun</div><div class="wd">Dom</div></div>
+        <div class="day-body">
+          <span class="city-pill">Roma · Centro histórico, a pé</span>
+          <span class="plan-flag ok">Rascunho inicial</span>
+          <div class="itin">
+            <div class="blk has-modal" data-place="trevi"><span class="ph">Manhã</span><span class="txt">Centro histórico a pé<span class="local">local</span><span class="note">Fontana di Trevi, Pantheon, Piazza Navona e a Escadaria Espanhola. Tudo coladinho e de graça. Se sobrou Fórum ou Palatino do dia 13, dá pra encaixar de manhã (o ingresso vale 24h).</span><span class="seemore">ver fotos e info</span></span><span class="tkbox no">Sem ingresso</span></div>
+            <div class="blk has-modal" data-place="venezia"><span class="ph">Tarde</span><span class="txt">Piazza Venezia e Campidoglio<span class="note">O grande monumento a Vítor Emanuel e a praça do Capitólio, desenhada por Michelangelo.</span><span class="seemore">ver fotos e info</span></span><span class="tkbox no">Sem ingresso</span></div>
+            <div class="blk has-modal" data-place="trastevere"><span class="ph">Noite</span><span class="txt">Jantar em Trastevere<span class="local">local</span><span class="note">Bairro de ruelas de pedra, o melhor clima de Roma à noite pra comer.</span><span class="seemore">ver fotos e info</span></span><span class="tkbox no">Sem ingresso</span></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="day">
+        <div class="date-col"><div class="d">15</div><div class="m">Jun</div><div class="wd">Seg</div></div>
+        <div class="day-body">
+          <span class="city-pill">Roma · Vaticano</span>
+          <span class="plan-flag ok">Rascunho inicial · último dia útil</span>
+          <div class="itin">
+            <div class="blk has-modal" data-place="sistine"><span class="ph">Manhã</span><span class="txt">Museus do Vaticano e Capela Sistina<span class="note">Ingresso €20 na bilheteria, ou €20 + €5 reservando online (€25). Abrem 08:00, chegar cedo. Aberto na segunda.</span><span class="seemore">ver fotos e info</span></span><span class="tkbox yes">Ingresso · €25</span></div>
+            <div class="blk has-modal" data-place="stpeters"><span class="ph">Meio-dia</span><span class="txt">Basílica de São Pedro<span class="note">Entrar na basílica é grátis. Subir na cúpula é opcional: €10 de elevador ou €8 de escada, na bilheteria. Vale pela vista da praça.</span><span class="seemore">ver fotos e info</span></span><span class="tkbox yes">Cúpula opcional · €10</span></div>
+            <div class="blk has-modal" data-place="castel"><span class="ph">Tarde</span><span class="txt">Castel Sant'Angelo e última noite<span class="local">local</span><span class="note">Entrar é opcional, €16/pessoa. Caminhar do Vaticano até o castelo pela ponte dos anjos é de graça. Fechar a viagem com um bom jantar.</span><span class="seemore">ver fotos e info</span></span><span class="tkbox yes">Opcional · €16</span></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="day travel">
+        <div class="date-col"><div class="d">16</div><div class="m">Jun</div><div class="wd">Ter</div></div>
+        <div class="day-body">
+          <span class="city-pill">Roma <span class="arrow">→</span> Londres</span>
+          <div class="fixed"><span class="t">madrugada</span><span><span class="ic">🚕</span> Sair para o aeroporto FCO</span></div>
+          <div class="fixed"><span class="t">06:40</span><span><span class="ic">✈</span> Wizz Air W4 6001 · Roma FCO → Londres Luton (chega 08:30)</span></div>
+        </div>
+      </div>
+
+      <div class="day travel">
+        <div class="date-col"><div class="d">17</div><div class="m">Jun</div><div class="wd">Qua</div></div>
+        <div class="day-body">
+          <span class="city-pill">Londres</span>
+          <div class="fixed"><span class="t">21:20</span><span><span class="ic">✈</span> Aguinaldo embarca LHR → GRU — LATAM LA8085</span></div>
+        </div>
+      </div>
+
+      <div class="day transit">
+        <div class="date-col"><div class="d">18</div><div class="m">Jun</div><div class="wd">Qui</div></div>
+        <div class="day-body">
+          <span class="city-pill">Em trânsito</span>
+          <div class="fixed"><span class="t">04:55</span><span><span class="ic">🛬</span> Aguinaldo chega a São Paulo (GRU)</span></div>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ============ ABA 3 · RESERVAS ============ -->
+  <section id="tab-reservas" class="tab-panel">
+    <div class="panel-intro">
+      <h2><span class="n">03</span> Reservas</h2>
+      <p>Resumo das reservas confirmadas. Códigos e comprovantes ficam no e-mail.</p>
+    </div>
+
+    <div class="bgrid">
+
+      <div class="bcard">
+        <div class="cat">Voo · Aguinaldo</div>
+        <h4>GRU → Londres → GRU</h4>
+        <div class="row"><span class="k">Ida</span><span class="v">LA8084 · 02/jun 23:50 → 03/jun 15:05</span></div>
+        <div class="row"><span class="k">Volta</span><span class="v">LA8085 · 17/jun 21:20 → 18/jun 04:55</span></div>
+        <div class="row"><span class="k">Reserva</span><span class="v ref">ver e-mail</span></div>      </div>
+
+      <div class="bcard">
+        <div class="cat">Trem</div>
+        <h4>Londres → Paris</h4>
+        <div class="row"><span class="k">Eurostar</span><span class="v">9044 · 06/jun 18:01 → 21:19</span></div>
+        <div class="row"><span class="k">Chegar</span><span class="v">16:46 · portões fecham 17:31</span></div>
+        <div class="row"><span class="k">Assentos</span><span class="v">Coach 5 · 53, 54, 58</span></div>
+        <div class="row"><span class="k">Reserva</span><span class="v ref">ver e-mail</span></div>
+        <div class="cost">£105.00 <span style="font-size:.7rem;font-weight:400;color:var(--muted)">remarcado (era 17:31)</span></div>      </div>
+
+      <div class="bcard">
+        <div class="cat">Trem · via Omio</div>
+        <h4>Paris → Zurique</h4>
+        <div class="row"><span class="k">TGV Lyria</span><span class="v">9219 · 09/jun 16:22 → 21:00</span></div>
+        <div class="row"><span class="k">Assentos</span><span class="v">Carro 15 · 552, 548, 549</span></div>
+        <div class="row"><span class="k">Reserva</span><span class="v ref">ver e-mail</span></div>
+        <div class="cost">£149.49</div>      </div>
+
+      <div class="bcard">
+        <div class="cat">Carro</div>
+        <h4>SIXT · Zurique</h4>
+        <div class="row"><span class="k">Categoria</span><span class="v">Compact Elite (auto)</span></div>
+        <div class="row"><span class="k">Retirada</span><span class="v">09/jun 21:00 · Aeroporto</span></div>
+        <div class="row"><span class="k">Devolução</span><span class="v">13/jun 07:00 · Parking 3</span></div>
+        <div class="row"><span class="k">Reserva</span><span class="v ref">ver e-mail</span></div>
+        <div class="cost">CHF 313.43 <span style="font-size:.7rem;font-weight:400;color:var(--muted)">+ caução CHF 300 temporária</span></div>      </div>
+
+      <div class="bcard">
+        <div class="cat">Voo</div>
+        <h4>Zurique → Roma</h4>
+        <div class="row"><span class="k">easyJet</span><span class="v">EJU2987 · 13/jun 08:30 → 10:05</span></div>
+        <div class="row"><span class="k">Assentos</span><span class="v">6A, 6B, 6C</span></div>
+        <div class="row"><span class="k">Bag drop</span><span class="v">abre 06:00 · fecha 07:40</span></div>
+        <div class="row"><span class="k">Reserva</span><span class="v ref">ver e-mail</span></div>
+        <div class="cost">£314.04</div>      </div>
+
+      <div class="bcard">
+        <div class="cat">Voo</div>
+        <h4>Roma → Londres</h4>
+        <div class="row"><span class="k">Wizz Air</span><span class="v">W4 6001 · 16/jun 06:40 → 08:30</span></div>
+        <div class="row"><span class="k">Destino</span><span class="v">Londres Luton</span></div>
+        <div class="row"><span class="k">Assentos</span><span class="v">5D, 5E, 5F</span></div>
+        <div class="row"><span class="k">Reserva</span><span class="v ref">ver e-mail</span></div>
+        <div class="cost">£172.81</div>      </div>
+
+      <div class="bcard">
+        <div class="cat">Hospedagem · Airbnb</div>
+        <h4>Paris</h4>
+        <div class="row"><span class="k">Datas</span><span class="v">06/jun 14:00 → 09/jun 11:00</span></div>
+        <div class="row"><span class="k">Anfitrião</span><span class="v">Sarah</span></div>
+        <div class="row"><span class="k">Endereço</span><span class="v">75008, perto da Gare Saint-Lazare</span></div>
+        <div class="row"><span class="k">Reserva</span><span class="v ref">ver e-mail</span></div>
+        <div class="cost">R$ 3.275,32</div>      </div>
+
+      <div class="bcard">
+        <div class="cat">Hospedagem · Airbnb</div>
+        <h4>Giswil · Suíça</h4>
+        <div class="row"><span class="k">Datas</span><span class="v">09/jun 16:00 → 13/jun 10:00</span></div>
+        <div class="row"><span class="k">Anfitrião</span><span class="v">Fabio</span></div>
+        <div class="row"><span class="k">Endereço</span><span class="v">Giswil, Obwalden</span></div>
+        <div class="row"><span class="k">Check-in</span><span class="v">Cofre de chaves (self)</span></div>
+        <div class="row"><span class="k">Reserva</span><span class="v ref">ver e-mail</span></div>
+        <div class="cost">R$ 3.993,82</div>      </div>
+
+      <div class="bcard">
+        <div class="cat">Hospedagem · Airbnb</div>
+        <h4>Roma</h4>
+        <div class="row"><span class="k">Datas</span><span class="v">13/jun 15:00 → 16/jun 10:00</span></div>
+        <div class="row"><span class="k">Anfitrião</span><span class="v">Valentina</span></div>
+        <div class="row"><span class="k">Local</span><span class="v">Perto da Roma Termini</span></div>
+        <div class="row"><span class="k">Check-in</span><span class="v">Smart Lock — enviar passaportes</span></div>
+        <div class="row"><span class="k">Reserva</span><span class="v ref">ver e-mail</span></div>
+        <div class="cost">R$ 3.235,47</div>      </div>
+
+      <div class="bcard" style="background:var(--paper2)">
+        <div class="cat">Hospedagem</div>
+        <h4>Londres</h4>
+        <div class="row"><span class="k">Tipo</span><span class="v">Casa do Gustavo</span></div>
+        <div class="row"><span class="k">Endereço</span><span class="v">Battersea</span></div>
+        <div class="row"><span class="k">Check-in</span><span class="v">Não há</span></div>
+        <div class="row"><span class="k">Papel</span><span class="v">Base inicial e final</span></div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ============ ABA 4 · FINANÇAS ============ -->
+  <section id="tab-financas" class="tab-panel">
+    <div class="panel-intro">
+      <h2><span class="n">04</span> Finanças</h2>
+      <p>Apenas o trecho <b>Londres → Londres</b> (sem os voos intercontinentais do Aguinaldo). Tudo convertido pra reais. Passe o mouse em cima de cada valor pra ver o original.</p>
+    </div>
+
+    <div class="budget">
+      <h3>Resumo de custos · Londres → Londres</h3>
+      <div class="bsub">Tudo em R$ · cotação de 28/mai/2026 (£1 = R$ 6,78 · CHF 1 = R$ 6,41)</div>
+      <div class="blines">
+        <div class="bcol">
+          <h5>Voos & Trens</h5>
+          <div class="bline"><span>Eurostar</span><span class="v"><span class="conv" data-orig="£105.00">R$ 711,60</span></span></div>
+          <div class="bline"><span>TGV Lyria (Omio)</span><span class="v"><span class="conv" data-orig="£149.49">R$ 1.013,11</span></span></div>
+          <div class="bline"><span>easyJet</span><span class="v"><span class="conv" data-orig="£314.04">R$ 2.128,28</span></span></div>
+          <div class="bline"><span>Wizz Air</span><span class="v"><span class="conv" data-orig="£172.81">R$ 1.171,15</span></span></div>
+          <div class="btot"><span>Subtotal</span><span><span class="conv" data-orig="£741.34">R$ 5.024,14</span></span></div>
+        </div>
+        <div class="bcol">
+          <h5>Carro</h5>
+          <div class="bline"><span>SIXT</span><span class="v"><span class="conv" data-orig="CHF 313.43">R$ 2.008,27</span></span></div>
+          <div class="bline"><span>Caução temporária</span><span class="v"><span class="conv" data-orig="CHF 300.00">R$ 1.922,22</span></span></div>
+          <div class="btot"><span>Pago</span><span><span class="conv" data-orig="CHF 313.43">R$ 2.008,27</span></span></div>
+        </div>
+        <div class="bcol">
+          <h5>Hospedagem</h5>
+          <div class="bline"><span>Airbnb Paris</span><span class="v">R$ 3.275,32</span></div>
+          <div class="bline"><span>Airbnb Giswil</span><span class="v">R$ 3.993,82</span></div>
+          <div class="bline"><span>Airbnb Roma</span><span class="v">R$ 3.235,47</span></div>
+          <div class="btot"><span>Subtotal</span><span>R$ 10.504,61</span></div>
+        </div>
+        <div class="bcol">
+          <h5>Ainda a vir</h5>
+          <div class="bline"><span>Ingressos de atrações</span><span class="v">—</span></div>
+          <div class="bline"><span>Combustível</span><span class="v">—</span></div>
+          <div class="bline"><span>Comida & transporte local</span><span class="v">—</span></div>
+        </div>
+      </div>
+      <div style="margin-top:22px;padding-top:18px;border-top:1px solid #3a3026">
+        <h5 style="font-size:.72rem;letter-spacing:.18em;text-transform:uppercase;color:var(--gold);margin-bottom:12px">Total comprometido · Londres → Londres</h5>
+        <div class="btot" style="font-size:1.5rem"><span>Total em reais&nbsp;&nbsp;</span><span>R$ 17.537,02</span></div>
+      </div>
+      <div class="bnote">Valores totais para os 3 viajantes (Gustavo · Aguinaldo · Murilo), não é por pessoa. Trecho Londres → Londres apenas. Convertido pra reais pela cotação de 28/mai/2026, então o número pode variar um pouco até a viagem. A caução do carro é temporária e some depois, por isso não entra no total. "A vir" (ingressos, combustível, comida e transporte local) ainda em aberto.</div>
+    </div>
+  </section>
+
+  <footer>
+    <span>Europa 2026 · Hub da Viagem · arquivo único, edite à vontade</span>
+    <span>Progresso salvo localmente neste arquivo</span>
+  </footer>
+
+</div>
+
+<!-- ============ MODAL ============ -->
+<div class="modal-overlay" id="modal">
+  <div class="modal">
+    <button class="modal-close" onclick="closeModal()">✕</button>
+    <img id="m-img" src="" alt="">
+    <div class="modal-body">
+      <div class="mcity" id="m-city"></div>
+      <h3 id="m-name"></h3>
+      <p id="m-desc"></p>
+    </div>
+  </div>
+</div>
+
+<div class="save-toast" id="toast">Progresso salvo ✓</div>
+
+<script>
+  const PLACES = {
+    battersea:{city:"Londres",name:"Battersea Power Station",img:"https://upload.wikimedia.org/wikipedia/commons/9/9c/Battersea_Power_Station_from_the_river.jpg",desc:"Uma antiga usina de energia às margens do Tâmisa, com as quatro chaminés brancas que viraram cartão postal de Londres. Hoje é um complexo restaurado cheio de lojas, restaurantes e um terraço com vista. Fica a poucos minutos da casa do Gustavo, ótima pra primeira noite sem cansar."},
+    tower:{city:"Londres",name:"Tower of London",img:"https://upload.wikimedia.org/wikipedia/commons/e/ec/Tower_of_London_from_the_Shard_%288515883950%29.jpg",desc:"Fortaleza medieval com quase mil anos de história, às margens do rio. Guarda as Joias da Coroa britânica e é vigiada pelos famosos Beefeaters. Tem muralhas, torres e até os corvos lendários. Vale comprar ingresso antecipado porque a fila costuma ser longa."},
+    borough:{city:"Londres",name:"Borough Market",img:"https://upload.wikimedia.org/wikipedia/commons/2/2d/London_2018_March_IMG_0663.jpg",desc:"Um dos mercados gastronômicos mais antigos de Londres, debaixo dos trilhos perto da London Bridge. Bancas de queijos, pães, frutos do mar e comida pronta pra comer ali mesmo. Perfeito pra um almoço informal provando de tudo um pouco."},
+    tate:{city:"Londres",name:"Tate Modern e Millennium Bridge",img:"https://upload.wikimedia.org/wikipedia/commons/0/00/Tate_Modern_-_Bankside_Power_Station.jpg",desc:"A passarela Millennium cruza o Tâmisa ligando a St Paul's à margem sul, onde fica a Tate Modern, museu de arte moderna instalado numa antiga usina. A entrada é grátis e o terraço tem uma das melhores vistas da cidade."},
+    stpauls:{city:"Londres",name:"St Paul's Cathedral",img:"https://upload.wikimedia.org/wikipedia/commons/c/cb/St_Pauls_aerial_%28cropped%29.jpg",desc:"A catedral da cúpula gigante projetada por Christopher Wren, símbolo da resistência de Londres na guerra. Dá pra entrar de graça assistindo ao Choral Evensong, o serviço cantado pelo coro no fim da tarde, sem precisar pagar a visita turística."},
+    covent:{city:"Londres",name:"Covent Garden",img:"https://upload.wikimedia.org/wikipedia/commons/4/42/Covent_Garden_Interior_May_2006_crop.jpg",desc:"Antigo mercado coberto que virou um dos points mais animados do centro, com lojas, cafés e artistas de rua se apresentando o tempo todo. Ótimo pra jantar e sentir a energia da cidade à noite."},
+    buckingham:{city:"Londres",name:"Buckingham Palace",img:"https://upload.wikimedia.org/wikipedia/commons/8/8d/Buckingham_Palace_London_Morning_2020_01_%28cropped%29.jpg",desc:"A residência oficial do rei no coração de Londres. A grande atração é a Troca da Guarda, cerimônia gratuita com soldados de casacos vermelhos e bandas militares, às 11h em dias específicos. Chegar cedo pra pegar lugar nos portões."},
+    hyde:{city:"Londres",name:"Hyde Park",img:"https://upload.wikimedia.org/wikipedia/commons/f/f3/Hyde_Park_London_from_the_air.jpg",desc:"O maior parque do centro de Londres, com o lago Serpentine, jardins e alamedas pra caminhar. Cola no Palácio de Buckingham e nos jardins de Kensington. Um respiro verde no meio da cidade."},
+    westminster:{city:"Londres",name:"Westminster, Big Ben e Parlamento",img:"https://upload.wikimedia.org/wikipedia/commons/3/3b/Houses_of_Parliament_in_2022_%28cropped%29.jpg",desc:"O conjunto mais fotografado de Londres: as Casas do Parlamento à beira do rio e a torre do relógio Big Ben. Ali do lado fica a Abadia de Westminster, onde acontecem coroações e casamentos reais. Por fora é tudo de graça."},
+    eye:{city:"Londres",name:"London Eye",img:"https://upload.wikimedia.org/wikipedia/commons/d/d6/London-Eye-2009.JPG",desc:"A roda gigante na margem sul do Tâmisa, de frente pro Big Ben. As cabines fechadas sobem devagar e dão uma volta de cerca de 30 minutos com vista de toda a cidade. Comprar antecipado pra evitar fila."},
+    portobello:{city:"Londres",name:"Portobello Road",img:"https://upload.wikimedia.org/wikipedia/commons/c/c2/Portobello_road_sign.jpg",desc:"A rua de mercado mais famosa de Notting Hill, com casinhas coloridas e o maior mercado de antiguidades do mundo aos sábados. Movimentada e cheia de charme, boa pra uma manhã de passeio leve."},
+    psg:{city:"Paris",name:"Parc des Princes (PSG)",img:"https://upload.wikimedia.org/wikipedia/en/f/fd/Paris_Le_Parc_des_Princes.jpg",desc:"O estádio do Paris Saint-Germain, no oeste da cidade. O tour leva à beira do gramado, à sala de imprensa, ao vestiário do time e à parede de troféus. Ingressos comprados: domingo 07/jun, entrada das 11:00, €28 por pessoa — chega-se direto do Trocadéro pela linha 9 do metrô (~12 min, descer em Porte de Saint-Cloud)."},
+    eiffel:{city:"Paris",name:"Trocadéro e Torre Eiffel",img:"https://upload.wikimedia.org/wikipedia/commons/8/85/Tour_Eiffel_Wikimedia_Commons_%28cropped%29.jpg",desc:"O símbolo de Paris, mais de 300 metros de ferro erguidos em 1889. A ideia de vocês é ver por fora, sem subir, que já vale muito. O Trocadéro, do outro lado do rio, tem a melhor foto, e o gramado do Champ de Mars é o lugar pra sentar de frente pra ela. À noite ela cintila por cinco minutos a cada hora."},
+    lafayette:{city:"Paris",name:"Galeries Lafayette",img:"https://upload.wikimedia.org/wikipedia/commons/6/6b/Galerie_Lafayette_Haussmann_Dome.jpg",desc:"A loja de departamentos mais famosa de Paris, conhecida pela imensa cúpula de vitral art nouveau de 1912 no centro do salão. Sobe-se de graça até o terraço, com uma vista linda da cidade e da Torre Eiffel. Fica pertinho do apê de vocês, ali perto da Ópera. Lugar bonito pra fechar a tarde sem gastar nada."},
+    arc:{city:"Paris",name:"Arco do Triunfo e Champs-Élysées",img:"https://upload.wikimedia.org/wikipedia/commons/7/79/Arc_de_Triomphe%2C_Paris_21_October_2010.jpg",desc:"O arco monumental no topo da avenida Champs-Élysées, mandado erguer por Napoleão. Dá pra subir ao terraço e ver as doze avenidas saindo em estrela. A descida pela avenida leva até a Place de la Concorde."},
+    seine:{city:"Paris",name:"Passeio de barco no Sena",img:"https://upload.wikimedia.org/wikipedia/commons/e/ed/Bercy%2C_Paris_01.jpg",desc:"Um cruzeiro de cerca de uma hora pelo rio que corta Paris, passando pela Torre Eiffel, pelo Louvre e por Notre-Dame. Dica da Sarah (anfitriã): a Bateaux Parisiens sai do pé da Torre a partir de €7,50 por pessoa, bem mais barato que as concorrentes. Melhor no fim do dia: pôr do sol na Torre, barco e fotos do Trocadéro à noite."},
+    louvre:{city:"Paris",name:"Museu do Louvre",img:"https://upload.wikimedia.org/wikipedia/commons/6/66/Louvre_Museum_Wikimedia_Commons.jpg",desc:"O maior museu de arte do mundo, dentro de um antigo palácio real com a pirâmide de vidro na entrada. Guarda a Mona Lisa e a Vênus de Milo, entre milhares de obras. Ingressos comprados: 08/jun, entrada 13:00. Focar nos destaques pra não cansar."},
+    notredame:{city:"Paris",name:"Île de la Cité e Notre-Dame",img:"https://upload.wikimedia.org/wikipedia/commons/f/f7/Notre-Dame_de_Paris%2C_4_October_2017.jpg",desc:"A ilha no meio do Sena onde Paris nasceu. Ali estão a catedral gótica de Notre-Dame e a Sainte-Chapelle, conhecida pelos vitrais que cobrem as paredes inteiras. Bonita pra caminhar mesmo que só por fora."},
+    latin:{city:"Paris",name:"Bairro Latino e Saint-Germain",img:"https://upload.wikimedia.org/wikipedia/commons/4/46/P1300734_Paris_V_place_de_la_Sorbonne_rwk.jpg",desc:"A região boêmia da margem esquerda, cheia de ruelas, livrarias, cafés históricos e bistrôs. Foi o reduto de estudantes e artistas por séculos. Ótimo clima pra jantar e perambular à noite."},
+    montmartre:{city:"Paris",name:"Montmartre e Sacré-Cœur",img:"https://upload.wikimedia.org/wikipedia/commons/c/c5/Le_sacre_coeur.jpg",desc:"O bairro alto dos artistas, com a basílica branca do Sacré-Cœur no topo, de onde se vê Paris inteira. As ruelas em volta guardam ateliês, cafés e a praça dos pintores. Vale a subida."},
+    grindelwald:{city:"Suíça",name:"Grindelwald e Grindelwald First",img:"https://upload.wikimedia.org/wikipedia/commons/b/ba/Grindelwald_View_02.jpg",desc:"Vilarejo alpino aos pés dos picos mais famosos da Suíça. De teleférico se sobe ao First, com a passarela suspensa no penhasco e trilhas com vista pros Alpes. Cenário de cartão postal."},
+    lauterbrunnen:{city:"Suíça",name:"Lauterbrunnen e Mürren",img:"https://upload.wikimedia.org/wikipedia/commons/2/29/1_lauterbrunnen_valley_wengen_2022.jpg",desc:"O vale das 72 cachoeiras, com a Staubbach despencando direto do paredão de pedra. No alto fica Mürren, vilarejo sem carros com vista pros gigantes Eiger, Mönch e Jungfrau."},
+    lucerne:{city:"Suíça",name:"Lucerna",img:"https://upload.wikimedia.org/wikipedia/commons/7/7c/2009_08_24_06262_Lucerne.jpg",desc:"Cidade à beira de um lago cercado de montanhas, com a Ponte da Capela coberta de madeira, de 1333, e a torre de água. Centro histórico charmoso pra caminhar sem pressa."},
+    aareschlucht:{city:"Suíça",name:"Aareschlucht · desfiladeiro do Aare",img:"https://upload.wikimedia.org/wikipedia/commons/3/33/Aareschlucht_166_7.jpg",desc:"Um desfiladeiro estreito que o rio Aare cavou na rocha ao longo de milênios, perto de Meiringen. Dá pra percorrer cerca de 1,4 km por passarelas de madeira presas no paredão, com a água verde correndo embaixo. Fica na rota do Brünig que sai de Giswil, ótima parada a caminho dos lagos. Adulto CHF 13."},
+    brienz:{city:"Suíça",name:"Lago de Brienz e Interlaken",img:"https://upload.wikimedia.org/wikipedia/commons/0/04/Aerial_image_of_Lake_Brienz_%28view_from_the_southwest%29.jpg",desc:"Águas de um turquesa intenso entre montanhas, com vilarejos como Iseltwald na beira. Interlaken fica encravada entre dois lagos e é a porta de entrada da região da Jungfrau."},
+    lungern:{city:"Suíça",name:"Lungern",img:"https://upload.wikimedia.org/wikipedia/commons/e/eb/Lungerersee_from_Br%C3%BCnigpass.jpg",desc:"Um lago de água turquesa cercado de verde, pertinho da base em Giswil. Lugar calmo e bonito, perfeito pra um dia mais leve sem pegar muita estrada."},
+    jungfraujoch:{city:"Suíça",name:"Jungfraujoch · Topo da Europa",img:"https://upload.wikimedia.org/wikipedia/commons/0/0e/Sphinx_et_Jungfrau_-_img_06980.jpg",desc:"A estação de trem mais alta da Europa, a 3.454 metros, no meio da neve eterna entre os picos. O trem sobe por dentro da montanha. É caro e o passeio é longo, então só vale com céu limpo."},
+    trevi:{city:"Roma",name:"Centro histórico de Roma",img:"https://upload.wikimedia.org/wikipedia/commons/c/c7/Trevi_Fountain_-_Roma.jpg",desc:"A pé dá pra emendar a Fontana di Trevi, onde se joga a moedinha, o Pantheon romano quase intacto, a Piazza Navona com suas fontes e a Escadaria Espanhola. Tudo coladinho e de graça."},
+    colosseum:{city:"Roma",name:"Coliseu, Fórum e Palatino",img:"https://upload.wikimedia.org/wikipedia/commons/d/de/Colosseo_2020.jpg",desc:"O anfiteatro romano de quase dois mil anos onde aconteciam os combates de gladiadores. Ao lado ficam o Fórum Romano, coração da Roma antiga, e o monte Palatino. Os três entram no mesmo ingresso — comprado: 13/jun, entrada 15:00."},
+    venezia:{city:"Roma",name:"Piazza Venezia e Campidoglio",img:"https://upload.wikimedia.org/wikipedia/commons/c/cc/Piazza_Venezia_-_Il_Vittoriano_%28cropped%29.jpg",desc:"A grande praça com o monumento branco a Vítor Emanuel II, apelidado de máquina de escrever. Subindo a escadaria chega-se à praça do Capitólio, desenhada por Michelangelo."},
+    trastevere:{city:"Roma",name:"Trastevere",img:"https://upload.wikimedia.org/wikipedia/commons/d/de/Santa_Maria_in_Trastevere_fountain.jpg",desc:"O bairro mais pitoresco de Roma, do outro lado do rio, com ruelas de pedra, hera nas paredes e trattorias tradicionais. O melhor clima da cidade pra jantar à noite."},
+    sistine:{city:"Roma",name:"Museus do Vaticano e Capela Sistina",img:"https://upload.wikimedia.org/wikipedia/commons/8/82/Sistina-interno.jpg",desc:"Um dos maiores acervos de arte do mundo, terminando na Capela Sistina com o teto pintado por Michelangelo. Abre às 8h e fecha aos domingos. Comprar com horário e chegar cedo pra fugir da fila."},
+    stpeters:{city:"Roma",name:"Basílica de São Pedro",img:"https://upload.wikimedia.org/wikipedia/commons/f/f5/Basilica_di_San_Pietro_in_Vaticano_September_2015-1a.jpg",desc:"A maior igreja do mundo, no coração do Vaticano, com a cúpula de Michelangelo e a imensa praça desenhada por Bernini. A entrada é grátis; subir na cúpula cobra, mas a vista compensa."},
+    castel:{city:"Roma",name:"Castel Sant'Angelo",img:"https://upload.wikimedia.org/wikipedia/commons/6/66/Castel_Sant%27_Angelo_Between_Leaves.jpg",desc:"Fortaleza circular à beira do Tibre, construída como mausoléu do imperador Adriano e depois ligada ao Vaticano. A ponte dos anjos na frente, com esculturas de Bernini, é uma das mais bonitas de Roma."}
+  };
+
+  function openModal(id){
+    const p = PLACES[id];
+    if(!p) return;
+    const img = document.getElementById('m-img');
+    if(p.img){ img.src = p.img; img.alt = p.name; img.style.display='block'; }
+    else { img.style.display='none'; }
+    document.getElementById('m-city').textContent = p.city;
+    document.getElementById('m-name').textContent = p.name;
+    document.getElementById('m-desc').textContent = p.desc;
+    document.getElementById('modal').classList.add('open');
+    document.body.style.overflow='hidden';
+  }
+  function closeModal(){
+    document.getElementById('modal').classList.remove('open');
+    document.body.style.overflow='';
+  }
+  document.querySelectorAll('[data-place]').forEach(el=>{
+    el.addEventListener('click', ()=>openModal(el.dataset.place));
+  });
+  document.getElementById('modal').addEventListener('click', e=>{ if(e.target.id==='modal') closeModal(); });
+  document.getElementById('m-img').addEventListener('error', function(){ this.style.display='none'; });
+  document.addEventListener('keydown', e=>{ if(e.key==='Escape') closeModal(); });
+
+  // Tabs
+  document.querySelectorAll('.tab-btn').forEach(b=>{
+    b.addEventListener('click', ()=>{
+      document.querySelectorAll('.tab-btn').forEach(x=>x.classList.remove('active'));
+      document.querySelectorAll('.tab-panel').forEach(x=>x.classList.remove('active'));
+      b.classList.add('active');
+      document.getElementById(b.dataset.tab).classList.add('active');
+      window.scrollTo({top:0,behavior:'smooth'});
+    });
+  });
+
+  // Persistência local das caixas via window.name
+  const boxes = document.querySelectorAll('ul.checks input[type=checkbox]');
+  const KEY = 'europa2026_checks';
+  function load(){
+    let data = {};
+    try { data = JSON.parse(window.name || '{}'); } catch(e){ data = {}; }
+    if(data && data[KEY]){
+      const saved = data[KEY];
+      boxes.forEach(b=>{ if(saved[b.id]){ b.checked = true; b.closest('li').classList.add('done'); } });
+    }
+  }
+  function save(){
+    let data = {};
+    try { data = JSON.parse(window.name || '{}'); } catch(e){ data = {}; }
+    const state = {};
+    boxes.forEach(b=>{ state[b.id] = b.checked; });
+    data[KEY] = state;
+    window.name = JSON.stringify(data);
+    showToast();
+  }
+  let toastTimer;
+  function showToast(){
+    const t = document.getElementById('toast');
+    t.classList.add('show');
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(()=>t.classList.remove('show'), 1400);
+  }
+  boxes.forEach(b=>{
+    b.addEventListener('change', ()=>{
+      b.closest('li').classList.toggle('done', b.checked);
+      save();
+    });
+  });
+  load();
+</script>
+</body>
+</html>
