@@ -4,8 +4,13 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Europa 2026 · Hub da Viagem</title>
+<meta name="description" content="Hub da viagem Europa 2026 — Londres, Paris, Suíça e Roma, 03 a 18 de junho.">
+<meta name="color-scheme" content="light">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>✈️</text></svg>">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,600;0,9..144,900;1,9..144,500&family=Spline+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
-  @import url('https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,600;0,9..144,900;1,9..144,500&family=Spline+Sans:wght@400;500;600;700&display=swap');
 
   :root{
     --ink:#221b14;
@@ -33,7 +38,7 @@
   .wrap{max-width:1080px;margin:0 auto;padding:0 22px 90px}
 
   /* ---------- HEADER ---------- */
-  header{padding:46px 0 0;border-bottom:2px solid var(--ink);position:relative}
+  header{padding:46px 0 0;position:relative}
   .kicker{font-size:.72rem;letter-spacing:.32em;text-transform:uppercase;color:var(--rust);font-weight:600;margin-bottom:14px}
   h1{font-family:'Fraunces',serif;font-weight:900;font-size:clamp(2.7rem,7vw,5rem);line-height:.95;letter-spacing:-.02em}
   h1 em{font-style:italic;color:var(--rust);font-weight:500}
@@ -43,7 +48,7 @@
   .meta-row span b{color:var(--ink);font-weight:600}
 
   /* ---------- TABS ---------- */
-  .tabs{display:flex;flex-wrap:wrap;gap:6px;margin-top:30px}
+  .tabs{display:flex;flex-wrap:wrap;gap:6px;margin-top:30px;border-bottom:2px solid var(--ink);position:sticky;top:0;z-index:40;background:var(--paper);padding-top:8px}
   .tab-btn{font-family:'Spline Sans';font-size:.92rem;font-weight:600;color:var(--muted);background:transparent;border:2px solid transparent;border-bottom:none;border-radius:12px 12px 0 0;padding:12px 20px;cursor:pointer;transition:.15s;position:relative;top:2px}
   .tab-btn:hover{color:var(--ink);background:var(--paper2)}
   .tab-btn.active{color:var(--rust);background:var(--card);border-color:var(--ink);border-bottom:2px solid var(--card)}
@@ -151,8 +156,8 @@
   .btot{display:flex;justify-content:space-between;font-family:'Fraunces',serif;font-weight:900;font-size:1.1rem;margin-top:10px;color:var(--gold)}
   .bnote{font-size:.76rem;color:#a99b86;margin-top:14px;font-style:italic}
   .conv{border-bottom:1px dotted var(--gold);cursor:help;position:relative}
-  .conv:hover::after{content:attr(data-orig);position:absolute;left:50%;bottom:140%;transform:translateX(-50%);background:var(--paper);color:var(--ink);font-size:.72rem;font-weight:700;white-space:nowrap;padding:5px 10px;border-radius:7px;box-shadow:0 6px 18px rgba(0,0,0,.35);z-index:20}
-  .conv:hover::before{content:"";position:absolute;left:50%;bottom:140%;transform:translate(-50%,92%);border:5px solid transparent;border-top-color:var(--paper);z-index:20}
+  .conv:hover::after,.conv:focus-visible::after{content:attr(data-orig);position:absolute;left:50%;bottom:140%;transform:translateX(-50%);background:var(--paper);color:var(--ink);font-size:.72rem;font-weight:700;white-space:nowrap;padding:5px 10px;border-radius:7px;box-shadow:0 6px 18px rgba(0,0,0,.35);z-index:20}
+  .conv:hover::before,.conv:focus-visible::before{content:"";position:absolute;left:50%;bottom:140%;transform:translate(-50%,92%);border:5px solid transparent;border-top-color:var(--paper);z-index:20}
 
   /* ---------- MODAL ---------- */
   .modal-overlay{position:fixed;inset:0;background:rgba(34,27,20,.62);display:none;align-items:center;justify-content:center;z-index:100;padding:20px}
@@ -171,12 +176,60 @@
   .save-toast{position:fixed;bottom:20px;left:50%;transform:translateX(-50%) translateY(80px);background:var(--pine);color:#fff;padding:10px 20px;border-radius:30px;font-size:.82rem;font-weight:600;box-shadow:0 6px 20px var(--shadow);transition:.3s;z-index:50}
   .save-toast.show{transform:translateX(-50%) translateY(0)}
 
+  /* ---------- POLISH: a11y, foco, impressão ---------- */
+  :focus-visible{outline:2px solid var(--rust);outline-offset:2px;border-radius:4px}
+  .tab-btn:focus-visible{outline-offset:-3px}
+  .itin .blk.has-modal:focus-visible{background:var(--paper2)}
+  h1,.panel-intro h2,.budget h3{text-wrap:balance}
+
+  /* ---------- POLISH: textura de papel ---------- */
+  body::after{content:"";position:fixed;inset:0;pointer-events:none;z-index:90;opacity:.5;background-image:url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="180" height="180"><filter id="n"><feTurbulence type="fractalNoise" baseFrequency="0.85" numOctaves="2"/><feColorMatrix type="saturate" values="0"/><feComponentTransfer><feFuncA type="linear" slope="0.045"/></feComponentTransfer></filter><rect width="180" height="180" filter="url(%23n)"/></svg>')}
+
+  /* ---------- POLISH: carimbo de datas no header ---------- */
+  .stamp{position:absolute;top:54px;right:0;transform:rotate(5deg);border:2.5px double var(--rust);color:var(--rust);border-radius:12px;padding:10px 16px;font-weight:700;letter-spacing:.16em;text-transform:uppercase;font-size:.7rem;text-align:center;line-height:1.7;opacity:.9}
+  .stamp b{display:block;font-family:'Fraunces',serif;font-size:1.05rem;letter-spacing:.06em}
+
+  /* ---------- POLISH: hoje, passado e dias de viagem ---------- */
+  .day{transition:opacity .25s}
+  .day.past{opacity:.45}
+  .day.past:hover,.day.past:focus-within{opacity:1}
+  .day.past .date-col .d{color:var(--muted)}
+  .day.today{background:linear-gradient(90deg,rgba(181,73,31,.08),transparent 65%)}
+  .day.today::before{background:var(--rust);box-shadow:0 0 0 6px rgba(181,73,31,.18)}
+  .day.today .date-col .d{color:var(--rust)}
+  .day.today .date-col::after{content:"hoje";display:inline-block;font-size:.6rem;font-weight:700;letter-spacing:.16em;text-transform:uppercase;color:#fff;background:var(--rust);border-radius:20px;padding:2px 9px;margin-top:6px}
+  .day.travel .day-body{background:linear-gradient(90deg,rgba(201,145,46,.09),transparent 55%)}
+
+  /* ---------- POLISH: progresso do checklist ---------- */
+  .prog{margin-left:auto;font-size:.78rem;font-weight:600;color:var(--muted);font-variant-numeric:tabular-nums;align-self:center}
+  .progbar{height:7px;background:var(--card);border:1px solid var(--line);border-radius:20px;overflow:hidden;margin-top:14px}
+  .progbar i{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--pine),#4d7355);border-radius:20px;transition:width .5s cubic-bezier(.22,1,.36,1)}
+
+  @media(prefers-reduced-motion:reduce){
+    *,*::before,*::after{animation:none!important;transition:none!important}
+    html{scroll-behavior:auto}
+  }
+
+  @media print{
+    .tabs,.save-toast,.modal-overlay,.pulse,.stamp{display:none!important}
+    .tab-panel{display:block!important;margin-bottom:30px}
+    body{background:none}
+    body::after{display:none}
+    .day.past{opacity:1}
+    .canvas{box-shadow:none}
+    .day,.bcard,.panel{break-inside:avoid}
+    .budget{print-color-adjust:exact;-webkit-print-color-adjust:exact}
+    .itin .seemore{display:none}
+  }
+
   @media(max-width:560px){
     .day{grid-template-columns:70px 1fr}
     .date-col{padding:16px 8px 16px 12px}
     .canvas{box-shadow:5px 5px 0 var(--ink)}
     .tab-btn{padding:10px 13px;font-size:.84rem}
     .itin .tkbox{display:none}
+    .prog{display:none}
+    .stamp{position:static;display:inline-block;margin-top:16px;transform:rotate(-2deg)}
   }
 </style>
 </head>
@@ -184,6 +237,7 @@
 <div class="wrap">
 
   <header>
+    <div class="stamp" aria-hidden="true">embarque<b>03 – 18 jun</b>2026</div>
     <div class="kicker">Hub da Viagem · jun 2026</div>
     <h1>Europa <em>2026</em></h1>
     <div class="route"><b>Londres</b> <span style="color:var(--rust)">→</span> <b>Paris</b> <span style="color:var(--rust)">→</span> <b>Suíça</b> <span style="color:var(--rust)">→</span> <b>Roma</b> <span style="color:var(--rust)">→</span> <b>Londres</b></div>
@@ -208,7 +262,8 @@
     </div>
 
     <div class="canvas">
-      <div class="canvas-head"><span class="pulse"></span><strong style="font-family:'Fraunces',serif;font-size:1.2rem">Pendências da viagem</strong></div>
+      <div class="canvas-head"><span class="pulse" aria-hidden="true"></span><strong style="font-family:'Fraunces',serif;font-size:1.2rem">Pendências da viagem</strong><span class="prog" id="prog"></span></div>
+      <div class="progbar" aria-hidden="true"><i id="progfill"></i></div>
       <div class="grid">
 
         <div class="panel">
@@ -647,15 +702,15 @@
 
   <footer>
     <span>Europa 2026 · Hub da Viagem · arquivo único, edite à vontade</span>
-    <span>Progresso salvo localmente neste arquivo</span>
+    <span>Progresso salvo no navegador, mesmo fechando a aba</span>
   </footer>
 
 </div>
 
 <!-- ============ MODAL ============ -->
 <div class="modal-overlay" id="modal">
-  <div class="modal">
-    <button class="modal-close" onclick="closeModal()">✕</button>
+  <div class="modal" role="dialog" aria-modal="true" aria-labelledby="m-name">
+    <button class="modal-close" onclick="closeModal()" aria-label="Fechar">✕</button>
     <img id="m-img" src="" alt="">
     <div class="modal-body">
       <div class="mcity" id="m-city"></div>
@@ -665,7 +720,7 @@
   </div>
 </div>
 
-<div class="save-toast" id="toast">Progresso salvo ✓</div>
+<div class="save-toast" id="toast" role="status" aria-live="polite">Progresso salvo ✓</div>
 
 <script>
   const PLACES = {
@@ -705,6 +760,7 @@
     castel:{city:"Roma",name:"Castel Sant'Angelo",img:"https://upload.wikimedia.org/wikipedia/commons/6/66/Castel_Sant%27_Angelo_Between_Leaves.jpg",desc:"Fortaleza circular à beira do Tibre, construída como mausoléu do imperador Adriano e depois ligada ao Vaticano. A ponte dos anjos na frente, com esculturas de Bernini, é uma das mais bonitas de Roma."}
   };
 
+  let lastFocus = null;
   function openModal(id){
     const p = PLACES[id];
     if(!p) return;
@@ -716,48 +772,97 @@
     document.getElementById('m-desc').textContent = p.desc;
     document.getElementById('modal').classList.add('open');
     document.body.style.overflow='hidden';
+    lastFocus = document.activeElement;
+    document.querySelector('.modal-close').focus();
   }
   function closeModal(){
     document.getElementById('modal').classList.remove('open');
     document.body.style.overflow='';
+    if(lastFocus){ lastFocus.focus(); lastFocus = null; }
   }
   document.querySelectorAll('[data-place]').forEach(el=>{
+    el.setAttribute('tabindex','0');
+    el.setAttribute('role','button');
     el.addEventListener('click', ()=>openModal(el.dataset.place));
+    el.addEventListener('keydown', e=>{
+      if(e.key==='Enter' || e.key===' '){ e.preventDefault(); openModal(el.dataset.place); }
+    });
   });
   document.getElementById('modal').addEventListener('click', e=>{ if(e.target.id==='modal') closeModal(); });
   document.getElementById('m-img').addEventListener('error', function(){ this.style.display='none'; });
   document.addEventListener('keydown', e=>{ if(e.key==='Escape') closeModal(); });
 
   // Tabs
+  document.querySelector('.tabs').setAttribute('role','tablist');
   document.querySelectorAll('.tab-btn').forEach(b=>{
+    b.id = 'btn-' + b.dataset.tab;
+    b.setAttribute('role','tab');
+    b.setAttribute('aria-controls', b.dataset.tab);
+    b.setAttribute('aria-selected', b.classList.contains('active'));
     b.addEventListener('click', ()=>{
-      document.querySelectorAll('.tab-btn').forEach(x=>x.classList.remove('active'));
+      document.querySelectorAll('.tab-btn').forEach(x=>{ x.classList.remove('active'); x.setAttribute('aria-selected','false'); });
       document.querySelectorAll('.tab-panel').forEach(x=>x.classList.remove('active'));
       b.classList.add('active');
+      b.setAttribute('aria-selected','true');
       document.getElementById(b.dataset.tab).classList.add('active');
       window.scrollTo({top:0,behavior:'smooth'});
     });
   });
+  document.querySelectorAll('.tab-panel').forEach(p=>{
+    p.setAttribute('role','tabpanel');
+    p.setAttribute('aria-labelledby','btn-'+p.id);
+  });
 
-  // Persistência local das caixas via window.name
+  // Dia atual na timeline (só durante a viagem, jun/2026)
+  (function(){
+    const now = new Date();
+    if(now.getFullYear() !== 2026 || now.getMonth() !== 5) return;
+    const dd = now.getDate();
+    document.querySelectorAll('.day').forEach(d=>{
+      const el = d.querySelector('.date-col .d');
+      if(!el) return;
+      const n = parseInt(el.textContent, 10);
+      if(n === dd) d.classList.add('today');
+      else if(n < dd) d.classList.add('past');
+    });
+  })();
+
+  // Persistência das caixas: localStorage (sobrevive a fechar a aba), com window.name de reserva
   const boxes = document.querySelectorAll('ul.checks input[type=checkbox]');
   const KEY = 'europa2026_checks';
+  function readStore(){
+    try { const ls = localStorage.getItem(KEY); if(ls) return JSON.parse(ls); } catch(e){}
+    try { const d = JSON.parse(window.name || '{}'); if(d && d[KEY]) return d[KEY]; } catch(e){}
+    return null;
+  }
+  function writeStore(state){
+    let ok = false;
+    try { localStorage.setItem(KEY, JSON.stringify(state)); ok = true; } catch(e){}
+    if(!ok){ try { window.name = JSON.stringify({[KEY]: state}); } catch(e){} }
+  }
+  function updateProgress(){
+    let done = 0;
+    boxes.forEach(b=>{ if(b.checked) done++; });
+    const prog = document.getElementById('prog');
+    if(prog) prog.textContent = done + ' de ' + boxes.length + ' resolvidas';
+    const fill = document.getElementById('progfill');
+    if(fill) fill.style.width = (boxes.length ? Math.round(done/boxes.length*100) : 0) + '%';
+  }
   function load(){
-    let data = {};
-    try { data = JSON.parse(window.name || '{}'); } catch(e){ data = {}; }
-    if(data && data[KEY]){
-      const saved = data[KEY];
-      boxes.forEach(b=>{ if(saved[b.id]){ b.checked = true; b.closest('li').classList.add('done'); } });
+    const saved = readStore();
+    if(saved){
+      boxes.forEach(b=>{
+        if(b.id in saved){ b.checked = !!saved[b.id]; b.closest('li').classList.toggle('done', b.checked); }
+      });
     }
+    updateProgress();
   }
   function save(){
-    let data = {};
-    try { data = JSON.parse(window.name || '{}'); } catch(e){ data = {}; }
     const state = {};
     boxes.forEach(b=>{ state[b.id] = b.checked; });
-    data[KEY] = state;
-    window.name = JSON.stringify(data);
+    writeStore(state);
     showToast();
+    updateProgress();
   }
   let toastTimer;
   function showToast(){
